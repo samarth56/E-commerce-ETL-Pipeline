@@ -156,4 +156,4 @@ Export processed datasets to the `processed/` directory.
 
 **Samarth Ghodake**
 
-Aspiring Data Engineer | Python | SQL | Pandas | PySpark | AWS
+Data Engineer | Python | SQL | Pandas | PySpark | AWS

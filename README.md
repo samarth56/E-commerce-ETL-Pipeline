@@ -2,30 +2,35 @@
 
 ## Overview
 
-This project is an end-to-end ETL (Extract, Transform, Load) pipeline built using **Python** and **Pandas** on the **Brazilian E-Commerce Public Dataset (Olist)**.
+An end-to-end ETL pipeline built using **Python and Pandas** on the Brazilian E-Commerce Public Dataset by Olist.
 
-The objective of this project is to simulate a real-world Data Engineering workflow by extracting data from multiple CSV files, profiling and cleaning the data, transforming it into an analysis-ready format, and generating business insights.
+The project demonstrates how raw data from multiple related CSV files can be extracted, profiled, cleaned, transformed, integrated, analyzed, and exported as processed datasets.
 
----
+## ETL Workflow
 
-## Project Objectives
-
-* Read and explore multiple datasets.
-* Perform data profiling.
-* Handle missing values and duplicates.
-* Validate candidate primary keys and relationships.
-* Transform and clean the data.
-* Merge datasets into a unified analytical dataset.
-* Generate business KPIs.
-* Export processed datasets.
-
----
+```text
+Raw CSV Files
+     ↓
+Data Exploration
+     ↓
+Data Cleaning
+     ↓
+Data Transformation
+     ↓
+Data Integration
+     ↓
+Business KPIs
+     ↓
+Visualization
+     ↓
+Processed Data
+```
 
 ## Dataset
 
 The project uses the **Brazilian E-Commerce Public Dataset by Olist**.
 
-### Tables Used
+The pipeline works with the following datasets:
 
 * Customers
 * Orders
@@ -34,12 +39,10 @@ The project uses the **Brazilian E-Commerce Public Dataset by Olist**.
 * Products
 * Sellers
 
----
-
 ## Project Structure
 
 ```text
-ecommerce-etl/
+ecommerce-pandas-etl/
 │
 ├── data/
 │   ├── raw/
@@ -49,111 +52,182 @@ ecommerce-etl/
 │   └── ecommerce_etl.ipynb
 │
 ├── README.md
-└── requirements.txt
+├── requirements.txt
+└── .gitignore
 ```
 
----
+## Data Exploration
 
-## ETL Workflow
+Each dataset was profiled to understand its structure and data quality.
 
-### 1. Extract
+The exploration included:
 
-* Load multiple CSV files using Pandas.
-* Inspect the structure of each dataset.
+* Dataset dimensions
+* Column names
+* Data types
+* Missing values
+* Duplicate records
+* Unique values
+* Candidate primary keys
+* Categorical value distributions
+* Business meaning of important fields
 
-### 2. Data Profiling
+## Data Cleaning
 
-For each dataset:
+The cleaning phase included:
 
-* Preview records
-* Check dataset dimensions
-* Identify data types
-* Find missing values
-* Detect duplicate records
-* Validate candidate primary keys
-* Explore categorical columns
-* Record observations
+* Converting timestamp columns to appropriate datetime types.
+* Correcting inconsistent column names in the Products dataset.
+* Investigating missing values.
+* Preserving business-valid missing values rather than blindly removing them.
+* Validating duplicate records and candidate keys.
 
-### 3. Data Cleaning *(In Progress)*
+## Data Transformation
 
-* Handle missing values
-* Rename inconsistent columns
-* Standardize data
-* Convert data types
-* Validate data quality
+### Orders
 
-### 4. Data Transformation *(Upcoming)*
+The following features were created:
 
-* Create derived columns
-* Convert timestamps
-* Calculate business metrics
-* Prepare analytical datasets
+* `delivery_days`
+* `order_year`
+* `order_month`
+* `order_weekday`
+* `delivery_vs_estimated_days`
+* `approval_time_hours`
 
-### 5. Data Integration *(Upcoming)*
+### Order Items
 
-Merge the following datasets:
+Created:
 
-* Customers
-* Orders
-* Order Items
-* Order Payments
-* Products
-* Sellers
+* `total_item_value`
 
-to create a master dataset.
+where:
 
-### 6. Load *(Upcoming)*
+```text
+total_item_value = price + freight_value
+```
 
-Export processed datasets to the `processed/` directory.
+## Data Integration
 
----
+The Orders dataset acts as the central entity.
 
-## Technologies Used
+```text
+Customers
+    │
+    │ customer_id
+    ↓
+Orders
+    │
+    │ order_id
+    ↓
+Order Items
+    │
+    ├── product_id → Products
+    │
+    └── seller_id  → Sellers
+```
+
+Payment records were first aggregated at the order level before being merged with the master dataset.
+
+This prevents payment records from unnecessarily multiplying the order-item level data.
+
+## Business KPIs
+
+The pipeline generates:
+
+1. Total Revenue
+2. Total Orders
+3. Average Order Value
+4. Monthly Revenue
+5. Orders by Status
+6. Average Delivery Time
+7. Early / On-Time / Late Delivery
+8. Top 10 Products by Revenue
+9. Revenue by Customer State
+10. Payment Method Distribution
+
+## Visualizations
+
+The project includes visualizations for:
+
+* Monthly revenue trends
+* Top products by revenue
+* Delivery performance
+
+## Output
+
+Processed datasets are exported to:
+
+```text
+data/processed/
+```
+
+including:
+
+* `master_dataset.csv`
+* `cleaned_orders.csv`
+* `cleaned_products.csv`
+* `monthly_revenue.csv`
+* `top_products.csv`
+* `kpi_summary.csv`
+
+## Technologies
 
 * Python
 * Pandas
+* NumPy
+* Matplotlib
 * Jupyter Notebook
 
----
+## How to Run
 
-## Current Progress
+Clone the repository and install the required dependencies:
 
-* [x] Dataset Exploration
-* [x] Data Profiling
-* [ ] Data Cleaning
-* [ ] Data Transformation
-* [ ] Data Integration
-* [ ] Business Analysis
-* [ ] Export Processed Data
+```bash
+pip install -r requirements.txt
+```
 
----
+Place the raw Olist CSV files inside:
 
-## Skills Demonstrated
+```text
+data/raw/
+```
 
-* Data Exploration
-* Data Profiling
-* Data Cleaning
-* Data Validation
-* Candidate Key Identification
-* Feature Engineering
-* Data Transformation
-* Data Integration
-* ETL Pipeline Design
-* Business Data Analysis
+Open the notebook:
 
----
+```text
+notebooks/ecommerce_etl.ipynb
+```
+
+Run the notebook from top to bottom.
+
+## Key Data Engineering Concepts Demonstrated
+
+* ETL pipeline development
+* Data profiling
+* Data quality validation
+* Missing-value analysis
+* Datetime transformation
+* Feature engineering
+* GroupBy and aggregation
+* One-to-many relationships
+* Composite/candidate key analysis
+* Relational data integration
+* KPI generation
+* Data export
 
 ## Future Improvements
 
-* Refactor notebook into modular Python scripts.
-* Implement the same ETL pipeline using PySpark.
-* Store processed data in a relational database.
-* Deploy the pipeline on AWS.
+Potential extensions include:
 
----
+* Converting the notebook into modular Python ETL scripts.
+* Implementing the pipeline using PySpark.
+* Loading processed data into a relational database.
+* Orchestrating the pipeline using Airflow.
+* Deploying the pipeline on a cloud platform such as AWS.
 
 ## Author
 
 **Samarth Ghodake**
 
-Data Engineer | Python | SQL | Pandas | PySpark | AWS
+Data Engineer

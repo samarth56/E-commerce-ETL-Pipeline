@@ -10,7 +10,7 @@ The project demonstrates how raw data from multiple related CSV files can be ext
 
 The following diagram illustrates the ETL pipeline and data integration architecture:
 
-![E-Commerce ETL Pipeline Architecture](src/etl_architecture.png)
+![E-Commerce ETL Pipeline Architecture](Src/etl_architecture.png)
 
 ## ETL Workflow
 
